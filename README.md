@@ -1,2 +1,2 @@
-# Autonomous_Gold_Hunter
+# AutonomousGoldHunter
 Autonom Gold Hunter project with Java for School
