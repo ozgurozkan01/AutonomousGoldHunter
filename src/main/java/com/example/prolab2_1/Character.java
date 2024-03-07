@@ -1,16 +1,13 @@
 package com.example.prolab2_1;
 import javafx.animation.TranslateTransition;
-import javafx.beans.value.ChangeListener;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.util.Duration;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
+import javafx.scene.paint.Color;
 
 enum MotionDirection{
     RIGHT,
@@ -26,14 +23,13 @@ public class Character {
     int locationY;
     int characterSizeX;
     int characterSizeY;
+    int currentRectangleIndex;
     InputStream imagePath;
     ImageView imageView;
     Image image;
     MotionDirection direction;
     // It is for intersecting just one time. but never updating second time
     boolean intersectionController = true;
-
-    private TranslateTransition translateComponent = new TranslateTransition();
 
     public Character(String imagePath, int locationX, int locationY, int characterSizeX, int characterSizeY) throws FileNotFoundException {
         this.locationX = locationX;
