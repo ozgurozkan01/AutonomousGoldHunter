@@ -1,17 +1,18 @@
 package com.example.prolab2_1;
-
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-
+import javafx.util.Duration;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
-import java.util.Scanner;
 
 class InfoRect {
     Rectangle rectangle;
@@ -21,16 +22,16 @@ class InfoRect {
 public class HelloApplication extends Application {
     ArrayList<InfoRect> rectangleArray = new ArrayList<>();
     Random random = new Random();
+    Character arthurMorgan = null;
+    int windowHeight = 1000;
+    int windowWidth = 1000;
+    double rectangleSize = 9.5;
+    double gapSize = 0.5;
+    int characterSizeX = 1;
+    int characterSizeY = 1;
 
     @Override
     public void start(Stage stage) throws IOException {
-        int windowHeight = 1000;
-        int windowWidth = 1000;
-        double rectangleSize = 9.5;
-        double gapSize = 0.5;
-        int characterSizeX = 2;
-        int characterSizeY = 2;
-
 
         /*System.out.println("Enter Window Height: ");
         Scanner scanner = new Scanner(System.in);
@@ -55,7 +56,6 @@ public class HelloApplication extends Application {
                 rectangleArray.add(infoRect);
             }
         }
-
 
         // Create Obstacles and Treasures
         ArrayList<TypeObstacles> typeObstacle = new ArrayList<>();
@@ -207,7 +207,6 @@ public class HelloApplication extends Application {
         }
 
         // Create Character Object
-        Character arthurMorgan = null;
         boolean isCharacterCreated = false;
         int characterX;
         int characterY;
@@ -218,12 +217,15 @@ public class HelloApplication extends Application {
 
             if (rectangleArray.get(characterX + characterY * 100).isAvailable){
                 arthurMorgan = new Character("pictures/bee.png", characterX, characterY, characterSizeX, characterSizeY);
+                arthurMorgan.currentRectangleIndex = characterX + characterY * 100;
                 isCharacterCreated = true;
             }
         }
 
-        arthurMorgan.move();
-        arthurMorgan.updateMovement(staticObstacles);
+        arthurMorgan.specifyDirectionRandomly();
+        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(10), e -> tick()));
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();
 
         // Add Obstacles, Treasures, Rectangles and Character to Screen
         Group myGroup = new Group();
@@ -245,9 +247,14 @@ public class HelloApplication extends Application {
 
         Scene scene = new Scene(myGroup,windowWidth,windowHeight);
         scene.setFill(Color.BLACK);
-        stage.setTitle("GOLDEN HUNTER");
+        stage.setTitle("AUTONOMOUS GOLDEN HUNTER");
         stage.setScene(scene);
         stage.show();
+    }
+
+    public void tick(){
+        arthurMorgan.move(windowWidth,windowHeight);
+        arthurMorgan.shouldCheckAround(windowWidth, rectangleSize, gapSize, rectangleArray);
     }
 
     public static void main(String[] args) {
