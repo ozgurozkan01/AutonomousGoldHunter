@@ -23,28 +23,28 @@ public class ObstacleGenerator {
     public StaticObstacle generateSummerObstacle(TypeObstacles typeObstacles) throws FileNotFoundException {
         switch (typeObstacles) {
             case WALL:
-                return new StaticObstacle("pictures/wall_summer.jpg", 10, 1, "summer");
+                return new StaticObstacle("pictures/wall_summer.jpg", 10, 1, "summer", TypeObstacles.WALL);
             case MOUNTAIN:
-                return new StaticObstacle("pictures/mountain_summer.png", 15, 15, "summer");
+                return new StaticObstacle("pictures/mountain_summer.png", 15, 15, "summer", TypeObstacles.MOUNTAIN);
             case TREE:
                 randomIndex = random.nextInt(TreeObstacles.values().length);
                 switch (treeObstacles[randomIndex]) {
                     case TREE2X2:
-                        return new StaticObstacle("pictures/tree_summer_2x2.png", 2, 2, "summer");
+                        return new StaticObstacle("pictures/tree_summer_2x2.png", 2, 2, "summer", TypeObstacles.TREE);
                     case TREE3X3:
-                        return new StaticObstacle("pictures/tree_summer_3x3.png", 3, 3, "summer");
+                        return new StaticObstacle("pictures/tree_summer_3x3.png", 3, 3, "summer", TypeObstacles.TREE);
                     case TREE4X4:
-                        return new StaticObstacle("pictures/tree_summer_4x4.png", 4, 4, "summer");
+                        return new StaticObstacle("pictures/tree_summer_4x4.png", 4, 4, "summer", TypeObstacles.TREE);
                     case TREE5X5:
-                        return new StaticObstacle("pictures/tree_summer_5x5.png", 5, 5, "summer");
+                        return new StaticObstacle("pictures/tree_summer_5x5.png", 5, 5, "summer", TypeObstacles.TREE);
                 }
             case ROCK:
                 randomIndex = random.nextInt(RockObstacles.values().length);
                 switch (rockObstacles[randomIndex]) {
                     case ROCK2X2:
-                        return new StaticObstacle("pictures/rock_summer_2x2.png", 2, 2, "summer");
+                        return new StaticObstacle("pictures/rock_summer_2x2.png", 2, 2, "summer", TypeObstacles.ROCK);
                     case ROCK3X3:
-                        return new StaticObstacle("pictures/rock_summer_3x3.png", 3, 3, "summer");
+                        return new StaticObstacle("pictures/rock_summer_3x3.png", 3, 3, "summer", TypeObstacles.ROCK);
                 }
         }
         return null;
@@ -53,28 +53,28 @@ public class ObstacleGenerator {
     public StaticObstacle generateWinterObstacle(TypeObstacles typeObstacles) throws FileNotFoundException {
         switch (typeObstacles) {
             case WALL:
-                return new StaticObstacle("pictures/wall_winter.png", 10, 1, "winter");
+                return new StaticObstacle("pictures/wall_winter.png", 10, 1, "winter", TypeObstacles.WALL);
             case MOUNTAIN:
-                return new StaticObstacle("pictures/mountain_winter.png", 15, 15, "winter");
+                return new StaticObstacle("pictures/mountain_winter.png", 15, 15, "winter", TypeObstacles.MOUNTAIN);
             case TREE:
                 randomIndex = random.nextInt(TreeObstacles.values().length);
                 switch (treeObstacles[randomIndex]) {
                     case TREE2X2:
-                        return new StaticObstacle("pictures/tree_winter_2x2.png", 2, 2, "winter");
+                        return new StaticObstacle("pictures/tree_winter_2x2.png", 2, 2, "winter", TypeObstacles.TREE);
                     case TREE3X3:
-                        return new StaticObstacle("pictures/tree_winter_3x3.png", 3, 3, "winter");
+                        return new StaticObstacle("pictures/tree_winter_3x3.png", 3, 3, "winter", TypeObstacles.TREE);
                     case TREE4X4:
-                        return new StaticObstacle("pictures/tree_winter_4x4.png", 4, 4, "winter");
+                        return new StaticObstacle("pictures/tree_winter_4x4.png", 4, 4, "winter", TypeObstacles.TREE);
                     case TREE5X5:
-                        return new StaticObstacle("pictures/tree_winter_5x5.png", 5, 5, "winter");
+                        return new StaticObstacle("pictures/tree_winter_5x5.png", 5, 5, "winter", TypeObstacles.TREE);
                 }
             case ROCK:
                 randomIndex = random.nextInt(RockObstacles.values().length);
                 switch (rockObstacles[randomIndex]) {
                     case ROCK2X2:
-                        return new StaticObstacle("pictures/rock_winter_2x2.png", 2, 2, "winter");
+                        return new StaticObstacle("pictures/rock_winter_2x2.png", 2, 2, "winter", TypeObstacles.ROCK);
                     case ROCK3X3:
-                        return new StaticObstacle("pictures/rock_winter_3x3.png", 3, 3, "winter");
+                        return new StaticObstacle("pictures/rock_winter_3x3.png", 3, 3, "winter", TypeObstacles.ROCK);
                 }
         }
         return null;
