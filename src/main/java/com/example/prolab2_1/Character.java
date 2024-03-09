@@ -83,7 +83,7 @@ public class Character {
                     currentRectangleIndex += (windowWidth / (rectangleSize + gapSize));
                     break;
             }
-
+            checkDirectionsAvailable(windowWidth, rectArrayList);
             rectArrayList.get(currentRectangleIndex).rectangle.setFill(Color.RED);
             return true;
         }
@@ -98,10 +98,50 @@ public class Character {
                     currentRectangleIndex--;
                     break;
             }
+            checkDirectionsAvailable(windowWidth, rectArrayList);
             rectArrayList.get(currentRectangleIndex).rectangle.setFill(Color.RED);
             return true;
         }
-
         return false;
+    }
+
+    public void checkDirectionsAvailable(int windowWidth, ArrayList<InfoRect> infoRectList)
+    {
+        /*
+        * Left = -1 -2 -3
+        * Right = 1 2 3
+        * Up = -width -2width -3width
+        * Down = width 2width 3width
+        */
+
+        switch (direction) {
+            case UP:
+                for (int i = 1; i <= 3; i++) {
+                    if (!infoRectList.get(currentRectangleIndex - windowWidth / 10 * i).isPlayerMoved)
+                        specifyDirectionRandomly();
+                }
+                break;
+
+            case DOWN:
+                for (int i = 1; i <= 3; i++) {
+                    if (!infoRectList.get(currentRectangleIndex + windowWidth / 10 * i).isPlayerMoved)
+                        specifyDirectionRandomly();
+                }
+                break;
+
+            case LEFT:
+                for (int i = 1; i <= 3; i++) {
+                    if (!infoRectList.get(currentRectangleIndex - i).isPlayerMoved)
+                        specifyDirectionRandomly();
+                }
+                break;
+
+            case RIGHT:
+                for (int i = 1; i <= 3; i++) {
+                    if (!infoRectList.get(currentRectangleIndex + i).isPlayerMoved)
+                        specifyDirectionRandomly();
+                }
+                break;
+        }
     }
 }
