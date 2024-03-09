@@ -16,7 +16,9 @@ import java.util.Random;
 
 class InfoRect {
     Rectangle rectangle;
-    boolean isAvailable = true;
+    boolean isObstacleReplaced = true;
+    boolean isPlayerMoved = true;
+    boolean isSeen = false;
 }
 
 public class HelloApplication extends Application {
@@ -70,8 +72,8 @@ public class HelloApplication extends Application {
         TreasureGenerator treasureGenerator = new TreasureGenerator();
         ObstacleGenerator obstacleGenerator = new ObstacleGenerator();
 
-        int totalStaticObstacle = 20;
-        int totalDynamicObstacle = 3;
+        int totalStaticObstacle = 30;
+        int totalDynamicObstacle = 10;
         int totalTreasure = 5;
         int randomObstacleIndex;
         int randomSeason;
@@ -111,6 +113,9 @@ public class HelloApplication extends Application {
         int imageX;
         int imageY;
         int index;
+        int startImageIndex;
+        int obstacleBorderSpace;
+        int imageBorderSpace = 0;
 
         // Set Coordinates of Static Obstacles
         for (int k = 0; k < staticObstacles.size(); k++) {
@@ -121,10 +126,23 @@ public class HelloApplication extends Application {
                     imageX = random.nextInt(49 - staticObstacles.get(k).sizeX) + 50;
                 else
                     imageX = random.nextInt(49 - staticObstacles.get(k).sizeX);
-                for (int y = 0; y < staticObstacles.get(k).sizeY + 2; y++) {
-                    for (int x = 0; x < staticObstacles.get(k).sizeX + 2; x++) {
+
+                
+                if(staticObstacles.get(k).getObstacleType() == TypeObstacles.MOUNTAIN ||
+                        staticObstacles.get(k).getObstacleType() ==TypeObstacles.TREE) {
+                    obstacleBorderSpace = 0;
+                    imageBorderSpace = 0;
+                }
+                else {
+                    obstacleBorderSpace = 2;
+                    imageBorderSpace = 3;
+                }
+
+
+                for (int y = 0; y < staticObstacles.get(k).sizeY + obstacleBorderSpace; y++) {
+                    for (int x = 0; x < staticObstacles.get(k).sizeX + obstacleBorderSpace; x++) {
                         index = (imageX + x) + ((imageY + y) * 100);
-                        if (rectangleArray.get(index).isAvailable) {
+                        if (rectangleArray.get(index).isObstacleReplaced) {
                             infoRects.add(rectangleArray.get(index));
                         }
                         else {
@@ -136,11 +154,25 @@ public class HelloApplication extends Application {
                 }
             }
 
-            for (int i = 0; i < infoRects.size(); i++)
-                infoRects.get(i).isAvailable = false;
+            for (int i = 0; i < infoRects.size(); i++) {
+                infoRects.get(i).isObstacleReplaced = false;
+                if (staticObstacles.get(k).getObstacleType() == TypeObstacles.TREE ||  staticObstacles.get(k).getObstacleType() == TypeObstacles.MOUNTAIN) {
+                    infoRects.get(i).isPlayerMoved = false;
+                }
+            }
 
-            staticObstacles.get(k).imageView.setX(infoRects.get(staticObstacles.get(k).sizeX + 3).rectangle.getX());
-            staticObstacles.get(k).imageView.setY(infoRects.get(staticObstacles.get(k).sizeX + 3).rectangle.getY());
+            startImageIndex = staticObstacles.get(k).sizeX + 3;
+            if (staticObstacles.get(k).getObstacleType() == TypeObstacles.ROCK ||  staticObstacles.get(k).getObstacleType() == TypeObstacles.WALL) {
+                for (int j = 1; j <= staticObstacles.get(k).sizeY; j++) {
+                    for (int l = 0; l < staticObstacles.get(k).sizeX; l++) {
+                        infoRects.get(l + startImageIndex).isPlayerMoved = false;
+                    }
+                    startImageIndex += staticObstacles.get(k).sizeX + 2;
+                }
+            }
+
+            staticObstacles.get(k).imageView.setX(infoRects.get(staticObstacles.get(k).sizeX + imageBorderSpace).rectangle.getX());
+            staticObstacles.get(k).imageView.setY(infoRects.get(staticObstacles.get(k).sizeX + imageBorderSpace - 1).rectangle.getY());
             infoRects.clear();
         }
 
@@ -154,7 +186,7 @@ public class HelloApplication extends Application {
                 for (int y = 0; y < dynamicObstacles.get(k).sizeY; y++) {
                     for (int x = 0; x < dynamicObstacles.get(k).sizeX; x++) {
                         index = (imageX + x) + ((imageY + y) * 100);
-                        if (rectangleArray.get(index).isAvailable) {
+                        if (rectangleArray.get(index).isObstacleReplaced) {
                             infoRects.add(rectangleArray.get(index));
                         }
                         else {
@@ -166,9 +198,11 @@ public class HelloApplication extends Application {
                 }
             }
 
+
             for (int i = 0; i < infoRects.size(); i++) {
                 infoRects.get(i).rectangle.setFill(Color.LIGHTPINK);
-                infoRects.get(i).isAvailable = false;
+                infoRects.get(i).isObstacleReplaced = false;
+                infoRects.get(i).isPlayerMoved = false;
             }
 
             dynamicObstacles.get(k).imageView.setX(infoRects.get(0).rectangle.getX());
@@ -186,7 +220,7 @@ public class HelloApplication extends Application {
                 for (int y = 0; y < treasures.get(k).sizeY; y++) {
                     for (int x = 0; x < treasures.get(k).sizeX; x++) {
                         index = (imageX + x) + ((imageY + y) * 100);
-                        if (rectangleArray.get(index).isAvailable) {
+                        if (rectangleArray.get(index).isObstacleReplaced) {
                             infoRects.add(rectangleArray.get(index));
                         }
                         else {
@@ -199,7 +233,7 @@ public class HelloApplication extends Application {
             }
 
             for (int i = 0; i < infoRects.size(); i++)
-                infoRects.get(i).isAvailable = false;
+                infoRects.get(i).isObstacleReplaced = false;
 
             treasures.get(k).imageView.setX(infoRects.get(0).rectangle.getX());
             treasures.get(k).imageView.setY(infoRects.get(0).rectangle.getY());
@@ -215,7 +249,7 @@ public class HelloApplication extends Application {
             characterX = random.nextInt(99 - characterSizeX);
             characterY = random.nextInt(99 - characterSizeY);
 
-            if (rectangleArray.get(characterX + characterY * 100).isAvailable){
+            if (rectangleArray.get(characterX + characterY * 100).isObstacleReplaced){
                 arthurMorgan = new Character("pictures/bee.png", characterX, characterY, characterSizeX, characterSizeY);
                 arthurMorgan.currentRectangleIndex = characterX + characterY * 100;
                 isCharacterCreated = true;
@@ -258,6 +292,7 @@ public class HelloApplication extends Application {
     }
 
     public static void main(String[] args) {
+
         launch();
     }
 }
