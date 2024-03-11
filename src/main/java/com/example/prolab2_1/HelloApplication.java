@@ -1,5 +1,4 @@
 package com.example.prolab2_1;
-
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -10,7 +9,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -308,8 +306,8 @@ public class HelloApplication extends Application {
         arthurMorgan.shouldCheckAround(windowWidth, windowHeight, (int)rectangleAndGapSize, rectangleArray);
     }
 
-
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         launch();
     }
 }
