@@ -7,22 +7,47 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+enum TreasureType {
+    GOLD,
+    SILVER,
+    EMERALD,
+    COPPER
+}
+
+enum TreasureState{
+    OPEN,
+    CLOSE
+}
+
 public class Treasure {
-    private String type;
+    private Enum treasureType;
+    private TreasureState treasureState;
     protected int sizeX;
     protected int sizeY;
     protected Image image;
     protected InputStream imagePath;
     protected ImageView imageView;
 
-    Treasure(String type, String imagePath) throws FileNotFoundException {
-        this.type = type;
+    Treasure(String imagePath, Enum treasureType) throws FileNotFoundException {
+        treasureState = TreasureState.CLOSE;
+        this.treasureType = treasureType;
         this.imagePath = new FileInputStream(imagePath);
-        sizeX = 3;
-        sizeY = 3;
+        sizeX = 2;
+        sizeY = 2;
         image = new Image(this.imagePath);
         imageView = new ImageView(image);
-        imageView.setFitHeight(sizeY * 10);
-        imageView.setFitWidth(sizeX * 10);
+        imageView.setFitHeight(sizeY * HelloApplication.rectangleAndGapSize);
+        imageView.setFitWidth(sizeX * HelloApplication.rectangleAndGapSize);
     }
+
+    public void updateImage(String imagePath) throws FileNotFoundException {
+        InputStream newImagePath = new FileInputStream(imagePath);
+        Image newImage = new Image(newImagePath);
+        imageView.setImage(newImage);
+    }
+
+    public Enum getTreasureType() { return treasureType; }
+    public TreasureState getTreasureState() { return treasureState; }
+
+    public void setTreasureState(TreasureState state) { treasureState = state; }
 }
