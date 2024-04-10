@@ -43,3 +43,5 @@ public class DynamicObstacle extends ObstacleBase{
         translateObstacle.play();
     }
 }
+
+/* TAMAM */

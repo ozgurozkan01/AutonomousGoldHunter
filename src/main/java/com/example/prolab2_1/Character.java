@@ -29,10 +29,10 @@ public class Character {
     int minStraigthWay;
     int randomStraigthWay;
     int currentStraightWay = 0;
-    final int viewField = 7;
-    final int viewDirection = 3;
+    final int viewField = 31;
+    final int viewDirection = 15;
     InputStream imagePath;
-    ImageView imageView;
+    static ImageView imageView;
     Image image;
     private MotionDirection frontDirection;
     private MotionDirection backDirection;
@@ -41,7 +41,12 @@ public class Character {
     private ArrayList<MotionDirection> lastFourDirections = new ArrayList<>();
     private ArrayList<TreasureType> treasuresType = new ArrayList<>();
     private ArrayList<Treasure> treasures = new ArrayList<>();
-
+    public static ArrayList<MotionDirection> pathDirections = new ArrayList<>();
+    private boolean isMovingAutonomously = true;
+    public static boolean canMove = true;
+    public int pathIndex = 0;
+    static private int totalPath = 0;
+    AStar aStarPathFinding = new AStar();
 
     public Character(String imagePath, int locationX, int locationY, int characterSizeX, int characterSizeY, int rectangleAndGapSize, int maxStraigthWay, int minStraigthWay) throws FileNotFoundException {
         this.locationX = locationX;
@@ -63,7 +68,7 @@ public class Character {
     }
 
 
-    MotionDirection getDirection(int windowWidth, int windowHeight, int rectangleAndGapSize, ArrayList<RectangleInfo> rectanglesInfo) {
+    MotionDirection getDirectionAutonomously(int windowWidth, int windowHeight, int rectangleAndGapSize, ArrayList<Node> rectanglesInfo) {
         emptyDirections.clear();
         boolean isIteratedPath = false;
         if (lastFourDirections.size() == 4){
@@ -127,7 +132,8 @@ public class Character {
     }
 
 
-    public void move(int windowWidth, int windowHeight, int rectangleAndGapSize, ArrayList<RectangleInfo> rectanglesInfo) throws FileNotFoundException {
+    public void move(int windowWidth, int windowHeight, int rectangleAndGapSize, ArrayList<Node> rectanglesInfo) throws FileNotFoundException {
+
         if (imageView.getY() > 0 && frontDirection == MotionDirection.UP)
             imageView.setY(imageView.getY() - 0.5);
 
@@ -140,8 +146,12 @@ public class Character {
         else if (imageView.getX() < windowWidth - characterSizeX && frontDirection == MotionDirection.RIGHT)
             imageView.setX(imageView.getX() + 0.5);
 
+        else if (isMovingAutonomously) {
+            frontDirection = getDirectionAutonomously(windowWidth, windowHeight, rectangleAndGapSize, rectanglesInfo);
+            backDirection = getBackDirection();
+        }
         else {
-            frontDirection = getDirection(windowWidth, windowHeight, rectangleAndGapSize, rectanglesInfo);
+            frontDirection = getDirectionPathFinding(pathIndex);
             backDirection = getBackDirection();
         }
 
@@ -156,13 +166,25 @@ public class Character {
                     break;
             }
 
-            rectanglesInfo.get(currentRectangleIndex).rectangle.setFill(Color.RED);
-            checkAround(windowWidth, windowHeight,rectangleAndGapSize,rectanglesInfo);
-            checkMotionDirection(windowWidth, windowHeight, rectangleAndGapSize, rectanglesInfo);
-            currentStraightWay++;
-            if (currentStraightWay >= randomStraigthWay) {
-                frontDirection = getDirection(windowWidth, windowHeight, rectangleAndGapSize, rectanglesInfo);
+            checkAround(windowWidth, windowHeight,rectangleAndGapSize,rectanglesInfo, aStarPathFinding);
+
+            if (isMovingAutonomously) {
+                checkMotionDirection(windowWidth, windowHeight, rectangleAndGapSize, rectanglesInfo);
+                currentStraightWay++;
+                if (currentStraightWay >= randomStraigthWay) {
+                    frontDirection = getDirectionAutonomously(windowWidth, windowHeight, rectangleAndGapSize, rectanglesInfo);
+                    backDirection = getBackDirection();
+                }
+            }
+            else {
+                frontDirection = getDirectionPathFinding(pathIndex);
                 backDirection = getBackDirection();
+                pathIndex++;
+                if (pathIndex >= totalPath) {
+                    aStarPathFinding.goalReached = false;
+                    isMovingAutonomously = true;
+                    pathIndex = 0;
+                }
             }
         }
 
@@ -177,25 +199,37 @@ public class Character {
                     break;
             }
 
-            rectanglesInfo.get(currentRectangleIndex).rectangle.setFill(Color.RED);
-            checkAround(windowWidth, windowHeight, rectangleAndGapSize,rectanglesInfo);
-            checkMotionDirection(windowWidth, windowHeight, rectangleAndGapSize, rectanglesInfo);
-            currentStraightWay++;
-            if (currentStraightWay >= randomStraigthWay) {
-                frontDirection = getDirection(windowWidth, windowHeight, rectangleAndGapSize, rectanglesInfo);
+            checkAround(windowWidth, windowHeight, rectangleAndGapSize, rectanglesInfo, aStarPathFinding);
+
+            if (isMovingAutonomously) {
+                checkMotionDirection(windowWidth, windowHeight, rectangleAndGapSize, rectanglesInfo);
+                currentStraightWay++;
+                if (currentStraightWay >= randomStraigthWay) {
+                    frontDirection = getDirectionAutonomously(windowWidth, windowHeight, rectangleAndGapSize, rectanglesInfo);
+                    backDirection = getBackDirection();
+                }
+            }
+            else {
+                frontDirection = getDirectionPathFinding(pathIndex);
                 backDirection = getBackDirection();
+                pathIndex++;
+                if (pathIndex >= totalPath) {
+                    aStarPathFinding.goalReached = false;
+                    isMovingAutonomously = true;
+                    pathIndex = 0;
+                }
             }
         }
     }
 
 
-    public void checkMotionDirection(int windowWidth, int windowHeight, int rectangleAndGapSize, ArrayList<RectangleInfo> rectanglesInfo) {
+    public void checkMotionDirection(int windowWidth, int windowHeight, int rectangleAndGapSize, ArrayList<Node> rectanglesInfo) {
         switch (frontDirection) {
             case UP:
                 for (int i = 1; i <= 3; i++) {
                     if ((currentRectangleIndex - windowWidth / rectangleAndGapSize * i) >= 0 &&
                             !rectanglesInfo.get(currentRectangleIndex - windowWidth / rectangleAndGapSize * i).isPlayerMoved) {
-                        frontDirection = getDirection(windowWidth, windowHeight, rectangleAndGapSize, rectanglesInfo);
+                        frontDirection = getDirectionAutonomously(windowWidth, windowHeight, rectangleAndGapSize, rectanglesInfo);
                         backDirection = getBackDirection();
                     }
                 }
@@ -205,7 +239,7 @@ public class Character {
                 for (int i = 1; i <= 3; i++) {
                     if ((currentRectangleIndex + windowWidth / rectangleAndGapSize * i) < (windowWidth / rectangleAndGapSize * windowHeight / rectangleAndGapSize) &&
                             !rectanglesInfo.get(currentRectangleIndex + windowWidth / rectangleAndGapSize * i).isPlayerMoved) {
-                        frontDirection = getDirection(windowWidth, windowHeight, rectangleAndGapSize, rectanglesInfo);
+                        frontDirection = getDirectionAutonomously(windowWidth, windowHeight, rectangleAndGapSize, rectanglesInfo);
                         backDirection = getBackDirection();
                     }
                 }
@@ -215,7 +249,7 @@ public class Character {
                 for (int i = 1; i <= 3; i++) {
                     if ((currentRectangleIndex - i > currentRectangleIndex - (currentRectangleIndex % (windowWidth / rectangleAndGapSize)) - 1)
                             && !rectanglesInfo.get(currentRectangleIndex - i).isPlayerMoved) {
-                        frontDirection = getDirection(windowWidth, windowHeight, rectangleAndGapSize, rectanglesInfo);
+                        frontDirection = getDirectionAutonomously(windowWidth, windowHeight, rectangleAndGapSize, rectanglesInfo);
                         backDirection = getBackDirection();
                     }
                 }
@@ -225,7 +259,7 @@ public class Character {
                 for (int i = 1; i <= 3; i++) {
                     if ((currentRectangleIndex + i < currentRectangleIndex + ((windowWidth / rectangleAndGapSize) - currentRectangleIndex % (windowWidth / rectangleAndGapSize))) &&
                             !rectanglesInfo.get(currentRectangleIndex + i).isPlayerMoved) {
-                        frontDirection = getDirection(windowWidth, windowHeight, rectangleAndGapSize, rectanglesInfo);
+                        frontDirection = getDirectionAutonomously(windowWidth, windowHeight, rectangleAndGapSize, rectanglesInfo);
                         backDirection = getBackDirection();
                     }
                 }
@@ -234,7 +268,7 @@ public class Character {
     }
 
 
-    public void checkAround(int windowWidth, int windowHeight, int rectangleAndGapSize, ArrayList<RectangleInfo> rectanglesInfo) throws FileNotFoundException {
+    public void checkAround(int windowWidth, int windowHeight, int rectangleAndGapSize, ArrayList<Node> rectanglesInfo, AStar aStarPathFinding) throws FileNotFoundException {
         int aroundInitialIndex = currentRectangleIndex - viewDirection - viewDirection * windowWidth / rectangleAndGapSize;
         for (int y = 0; y < viewField; y++) {
             for (int x = 0; x < viewField; x++) {
@@ -245,11 +279,12 @@ public class Character {
                         index < (windowWidth / rectangleAndGapSize) * (windowHeight / rectangleAndGapSize);
 
                 if (upAndDownControl && leftAndRightControl) {
-                    //rectanglesInfo.get(index).rectangle.setFill(Color.BLUE);
-                    if (treasuresType.contains(rectanglesInfo.get(index).obstacleType)) {
-                        if (rectanglesInfo.get(index).treasure.getTreasureType() == targetTreasure &&
-                                rectanglesInfo.get(index).treasure.getTreasureState() == TreasureState.CLOSE) {
+                    if (treasuresType.contains(rectanglesInfo.get(index).obstacleType))
+                    {
 
+                        // if treasure is close and has a type we look for
+                        if (rectanglesInfo.get(index).treasure.getTreasureType() == targetTreasure &&  rectanglesInfo.get(index).treasure.getTreasureState() == TreasureState.CLOSE)
+                        {
                             rectanglesInfo.get(index).treasure.setTreasureState(TreasureState.OPEN);
                             HelloApplication.treasures.remove(rectanglesInfo.get(index).treasure);
 
@@ -259,12 +294,28 @@ public class Character {
                                     shouldChangeTarget = false;
                                 }
                             }
-                            if (shouldChangeTarget) {
+
+                            if (shouldChangeTarget && !HelloApplication.treasures.isEmpty()) {
                                 int treasureIndex = targetTreasure.ordinal() + 1;
                                 targetTreasure = TreasureType.values()[treasureIndex];
-                                System.out.println(targetTreasure);
+                                search:
+                                for (Treasure treasure : treasures) {
+                                    if (targetTreasure == treasure.getTreasureType()) {
+                                        for (Node node : treasure.nodes) {
+                                            if (node.isSeen) {
+                                                aStarPathFinding.setStartNode(rectanglesInfo.get(currentRectangleIndex));
+                                                aStarPathFinding.setGoalNode(node);
+                                                aStarPathFinding.setCostOnNodes(rectanglesInfo,  windowWidth / rectangleAndGapSize,  windowHeight / rectangleAndGapSize);
+                                                isMovingAutonomously = false;
+                                                canMove = false;
+                                                treasures.remove(treasure);
+                                                break search;
+                                            }
+                                        }
+                                    }
+                                }
                             }
-                            rectanglesInfo.get(index).treasure.updateImage("pictures/bee.png");
+                            rectanglesInfo.get(index).treasure.updateImage("pictures/" + rectanglesInfo.get(index).treasure.getTreasureType() +".jpg");
                             System.out.println("This treasure convenient! I am reach :)");
                         }
                         else if (rectanglesInfo.get(index).treasure.getTreasureType() != targetTreasure &&
@@ -286,6 +337,30 @@ public class Character {
         }
     }
 
+        public static void fillPathDirectionList(ArrayList<Node> path) {
+        pathDirections.clear();
+        totalPath = path.size()-1;
+        for (int i = path.size()-1; i > 0; i--) {
+            if (path.get(i).row == path.get(i-1).row && path.get(i).column < path.get(i-1).column)
+                pathDirections.add(MotionDirection.RIGHT);
+            if (path.get(i).row == path.get(i-1).row && path.get(i).column > path.get(i-1).column)
+                pathDirections.add(MotionDirection.LEFT);
+            if (path.get(i).row > path.get(i-1).row && path.get(i).column == path.get(i-1).column)
+                pathDirections.add(MotionDirection.UP);
+            if (path.get(i).row < path.get(i-1).row && path.get(i).column == path.get(i-1).column)
+                pathDirections.add(MotionDirection.DOWN);
+        }
+    }
+
+    public MotionDirection getDirectionPathFinding(int index) {
+        try {
+            return pathDirections.get(index);
+        }
+        catch (IndexOutOfBoundsException e)
+        {
+        }
+        return null;
+    }
 
     public MotionDirection getBackDirection() {
         switch (frontDirection) {
@@ -303,4 +378,10 @@ public class Character {
 
     public void setFrontDirection(MotionDirection direction) { frontDirection = direction; }
     public void setBackDirection(MotionDirection direction) { backDirection = direction; }
+    public boolean getIsMovingAutonomously () {
+        return isMovingAutonomously;
+    }
+    public TreasureType getTargetTreasure() {return targetTreasure;}
 }
+
+/* TAMAM */

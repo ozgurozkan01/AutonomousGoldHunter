@@ -18,3 +18,5 @@ public class TreasureGenerator{
         return treasure = new Treasure("pictures/copper_chest.png", TreasureType.COPPER);
     }
 }
+
+/* TAMAM */

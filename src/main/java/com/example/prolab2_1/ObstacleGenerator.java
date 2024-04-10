@@ -12,7 +12,7 @@ public class ObstacleGenerator {
 
     // Creates Two Times From Whole Obstacles
     public void createDefaultObstacles(ArrayList<StaticObstacle> staticObstacles) throws FileNotFoundException {
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 1; i++) {
             for (TypeObstacles typeObstacles : TypeObstacles.values()) {
                 staticObstacles.add(generateSummerObstacle(typeObstacles));
                 staticObstacles.add(generateWinterObstacle(typeObstacles));
@@ -90,3 +90,5 @@ public class ObstacleGenerator {
         return null;
     }
 }
+
+/* TAMAM */

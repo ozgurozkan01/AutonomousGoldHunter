@@ -6,6 +6,7 @@ import javafx.scene.image.ImageView;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 enum TreasureType {
     GOLD,
@@ -27,6 +28,7 @@ public class Treasure {
     protected Image image;
     protected InputStream imagePath;
     protected ImageView imageView;
+    protected ArrayList<Node> nodes = new ArrayList<>();
 
     Treasure(String imagePath, Enum treasureType) throws FileNotFoundException {
         treasureState = TreasureState.CLOSE;
@@ -47,7 +49,10 @@ public class Treasure {
     }
 
     public Enum getTreasureType() { return treasureType; }
+
     public TreasureState getTreasureState() { return treasureState; }
 
     public void setTreasureState(TreasureState state) { treasureState = state; }
 }
+
+/* TAMAM */
