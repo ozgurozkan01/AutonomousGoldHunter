@@ -90,5 +90,3 @@ public class ObstacleGenerator {
         return null;
     }
 }
-
-/* TAMAM */

@@ -54,5 +54,3 @@ public class Treasure {
 
     public void setTreasureState(TreasureState state) { treasureState = state; }
 }
-
-/* TAMAM */

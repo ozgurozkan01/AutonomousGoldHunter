@@ -50,5 +50,3 @@ public class StaticObstacle extends ObstacleBase{
         return obstacleType;
     }
 }
-
-/* TAMAM */

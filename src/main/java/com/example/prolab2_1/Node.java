@@ -14,24 +14,12 @@ public class Node {
     boolean isObstaclePlaced = true;
     boolean isPlayerMoved = true;
     boolean isSeen = false;
-    boolean isChecked = false;
-    boolean isOpen = false;
-    boolean canBeUsedOnPathfinding = true;
     Enum obstacleType;
     Treasure treasure;
     InputStream imagePath;
     ImageView imageView;
     Image image;
 
-    Node parent;
-    int column;
-    int row;
-    int gCost;
-    int hCost;
-    int fCost;
-
-    boolean start;
-    boolean goal;
 
     Node() throws FileNotFoundException {
         imagePath = new FileInputStream("pictures/fog.jpg");
@@ -45,25 +33,4 @@ public class Node {
         imageView.setFitWidth(rectangle.getWidth());
         imageView.setFitHeight(rectangle.getHeight());
     }
-
-    public void setAsStart(boolean isStart) {
-        start = isStart;
-    }
-
-    public void setAsGoal(boolean isGoal) {
-        goal = isGoal;
-    }
-
-    public void setAsOpen(boolean isOpen) {
-        this.isOpen = isOpen;
-    }
-
-    public void setAsChecked(boolean isChecked) {
-        this.isChecked = isChecked;
-    }
-
-    public void setAsPath() {
-    }
 }
-
-/* TAMAM */

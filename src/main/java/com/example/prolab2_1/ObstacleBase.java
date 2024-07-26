@@ -12,5 +12,3 @@ public class ObstacleBase {
     protected InputStream imagePath;
     protected ImageView imageView;
 }
-
-/* TAMAM */
