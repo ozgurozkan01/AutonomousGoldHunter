@@ -8,7 +8,7 @@ Develope with Java/OOP an pathfinding algorithm and map generator with non-coinc
 
 <img src="./Screenshots/mainWindow.png" width="400">
 
-|                        Before Start                        |                        After Start                         |
+|                     Before Start                      |                        After Start                         |
 :-----------------------------------------------------:|:----------------------------------------------------:
-| <img src="./Screenshots/beforeStart.png" width="400"> | <img src="./screenshots/afterStart.png" width="400"> |
+| <img src="./screenshots/beforeStart.png" width="400"> | <img src="./screenshots/afterStart.png" width="400"> |
 |                                                       |                                                      |
