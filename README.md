@@ -6,7 +6,7 @@ Develope with Java/OOP an pathfinding algorithm and map generator with non-coinc
 
 ## Screenshots
 
-<img src="./Screenshots/mainWindow.png" width="400">
+<img src="./screenshots/mainWindow.png" width="400">
 
 |                     Before Start                      |                        After Start                         |
 :-----------------------------------------------------:|:----------------------------------------------------:
